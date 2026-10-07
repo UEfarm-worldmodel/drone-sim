@@ -4,7 +4,9 @@
 先启动模拟器（env\\Windows\\Blocks.exe 或 一键键盘飞行.bat），再运行本脚本：
 
     conda activate cosys-airsim
-    python keyboard_flight.py
+    python keyboard_flight.py [--fpv]
+
+--fpv：额外打开机载前视相机窗口（第一视角，约 20 FPS）。
 
 键位（**全局生效**：焦点在 Blocks 窗口上也能飞）：
     W / S        前进 / 后退      A / D   左移 / 右移
@@ -14,6 +16,7 @@
 
 注意：按键是系统级的——切到微信打字也会被当成飞行输入，飞完记得 Esc 退出。
 """
+import argparse
 import math
 import sys
 import time
@@ -43,6 +46,14 @@ def heading_deg(state):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fpv", action="store_true", help="打开机载前视相机 FPV 窗口（第一视角）")
+    args = ap.parse_args()
+    FPV = args.fpv
+    if FPV:
+        import cv2
+        import numpy as np
+
     client = airsim.MultirotorClient()
     try:
         client.confirmConnection()
@@ -74,7 +85,7 @@ def main():
 
             fwd = (V_HORZ if key_down("w") else 0) - (V_HORZ if key_down("s") else 0)
             right = (V_HORZ if key_down("d") else 0) - (V_HORZ if key_down("a") else 0)
-            down = (V_VERT if key_down("space") else 0) - (V_VERT if key_down("shift") else 0)
+            down = (V_VERT if key_down("shift") else 0) - (V_VERT if key_down("space") else 0)
             yaw_rate = (YAW_RATE if key_down("e") else 0) - (YAW_RATE if key_down("q") else 0)
 
             yaw_cmd += yaw_rate * dt
@@ -85,6 +96,15 @@ def main():
             client.moveByVelocityAsync(vx, vy, down, 0.3,
                                        drivetrain=airsim.DrivetrainType.MaxDegreeOfFreedom,
                                        yaw_mode=airsim.YawMode(True, yaw_rate))
+
+            if FPV:
+                raw = client.simGetImage("0", airsim.ImageType.Scene)
+                if raw:
+                    img = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR)
+                    if img is not None:
+                        cv2.imshow("FPV - onboard camera 0", cv2.resize(img, (512, 288)))
+                if cv2.waitKey(1) & 0xFF == 27:   # FPV 窗口内按 Esc 同样退出
+                    break
 
             s = client.getMultirotorState()
             p = s.kinematics_estimated.position
@@ -99,6 +119,8 @@ def main():
             client.enableApiControl(False)
         except Exception:
             pass
+        if FPV:
+            cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

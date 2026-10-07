@@ -130,6 +130,7 @@ cd platforms\cosys-airsim\env\Windows
 cd ..\..\scripts
 python smoke_test.py        # 自检：连接、起飞、移动、取图、降落
 python keyboard_flight.py   # 键盘飞行
+python keyboard_flight.py --fpv   # 同时打开机载前视相机窗口（第一视角，约 20 FPS）
 ```
 
 键盘飞行键位：W/S 前后，A/D 左右，空格/Shift 升降，Q/E 偏航，Esc 降落退出；松开全部按键即原地悬停。按键经 `GetAsyncKeyState` 全局捕获，模拟器窗口保持焦点即可控制；由于按键为系统级捕获，在其他窗口输入文字亦会被视为飞行指令，结束后请按 Esc 退出。Blocks 窗口内按 F10 可切换内置手动模式。
