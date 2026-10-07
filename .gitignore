@@ -1,0 +1,23 @@
+# 第三方模拟器仓库（体积大且自带 git 历史，按 README 克隆）
+platforms/gym-pybullet-drones/gym-pybullet-drones/
+
+# 预编译环境与下载包（约 2.5GB，下载地址见 README）
+platforms/cosys-airsim/env/
+
+# 运行产物
+data/
+
+# 日志与临时文件
+*.log
+*_log.txt
+*_err.txt
+*.aux
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 训练/仿真产物
+results/
+saves/
