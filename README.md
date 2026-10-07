@@ -146,7 +146,7 @@ HUD 提示说明：`API call was not received, entering hover mode` 为 SimpleFl
 
 ## 5. 待部署平台
 
-- **Isaac Sim / Isaac Lab**：大规模并行训练后端（GPU 数千并行实例），需 Linux + RTX 机器与独立环境。
+- **Isaac Sim / Isaac Lab**：大规模并行训练后端（GPU 数千并行实例）。硬件结论（2026-10 核实）：RTX 50 系需 Isaac Sim 5.0+（Blackwell 渲染自 5.0 修复）；RTX 5060 8GB 仅够 GUI 预览，RTX 5070 Ti 16GB 可做小规模纯状态观测训练，正式训练使用实验室 Linux 服务器（3090/4090）。安装用 pip（Windows 11 官方支持，Python 3.11），包体约 20–50 GB，勿装 C 盘。
 - **Flightmare**：渲染/物理解耦架构（UZH RPG），上游 2022 年后停滞，选做，建议 Docker 部署。
 - **Gazebo + PX4 SITL**：暂缓，理由见 §3.6（实机非 PX4 生态）。
 
